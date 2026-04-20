@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Admin user ──────────────────────────────────────────────────────────────
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+// ─── CMS: Hero section ──────────────────────────────────────────────────────
+
+model HeroContent {
+  id          String @id @default(uuid())
+  locale      String @default("id") // "id" | "en"
+  badge       String
+  headline    String
+  subheadline String
+  ctaPrimary  String @map("cta_primary")
+  ctaSecondary String @map("cta_secondary")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("hero_content")
+}
+
+// ─── CMS: Clients section text ───────────────────────────────────────────────
+
+model ClientsSectionContent {
+  id        String   @id @default(uuid())
+  locale    String   @default("id")
+  badge     String
+  heading   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("clients_section_content")
+}
+
+// ─── CMS: Client logos ───────────────────────────────────────────────────────
+
+model Client {
+  id       String  @id @default(uuid())
+  name     String
+  logoUrl  String  @map("logo_url")
+  website  String?
+  order    Int     @default(0)
+  visible  Boolean @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("clients")
+}
+
+// ─── CMS: Why Us section ─────────────────────────────────────────────────
+
+model WhyUsSectionContent {
+  id        String   @id @default(uuid())
+  locale    String   @default("id")
+  badge     String
+  heading   String
+  ctaText   String   @map("cta_text")
+  stats     Json     // [{ value: "100+", label: "Satisfied Clients" }, ...]
+  videoUrl  String?  @map("video_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("why_us_section_content")
+}
+
+// ─── CMS: About Hero section ─────────────────────────────────────────────────
+
+model AboutHeroContent {
+  id              String   @id @default(uuid())
+  locale          String   @default("id")
+  badge           String
+  headline        String
+  headlineAccent  String   @map("headline_accent")
+  description     String
+  cta             String
+  ctaSecondary    String   @map("cta_secondary")
+  imageUrl        String?  @map("image_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("about_hero_content")
+}
+
+// ─── CMS: Services section text ──────────────────────────────────────────────
+
+model ServicesSectionContent {
+  id         String   @id @default(uuid())
+  locale     String   @default("id")
+  badge      String
+  heading    String
+  subheading String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("services_section_content")
+}
+
+// ─── CMS: Services ───────────────────────────────────────────────────────────
+
+model Service {
+  id          String  @id @default(uuid())
+  locale      String  @default("id")
+  slug        String
+  icon        String  @default("Globe")
+  colorTheme  String  @default("violet") @map("color_theme")
+  label       String
+  description String
+  order       Int     @default(0)
+  visible     Boolean @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale, slug])
+  @@map("services")
+}
