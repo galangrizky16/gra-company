@@ -12,12 +12,13 @@ import {
   fetchClients,
   fetchWhyUs,
   fetchServices,
+  fetchWhyChoose,
 } from "@/lib/fetchers";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [heroId, heroEn, clientsId, clientsEn, whyUsId, whyUsEn, servicesId, servicesEn] =
+  const [heroId, heroEn, clientsId, clientsEn, whyUsId, whyUsEn, servicesId, servicesEn, whyChooseId, whyChooseEn] =
     await Promise.all([
       fetchHero("id"),
       fetchHero("en"),
@@ -27,6 +28,8 @@ export default async function Home() {
       fetchWhyUs("en"),
       fetchServices("id"),
       fetchServices("en"),
+      fetchWhyChoose("id"),
+      fetchWhyChoose("en"),
     ]);
 
   return (
@@ -35,7 +38,7 @@ export default async function Home() {
       <ClientsCarousel data={{ id: clientsId, en: clientsEn }} />
       <WhyUsSection data={{ id: whyUsId, en: whyUsEn }} />
       <ServicesSection data={{ id: servicesId, en: servicesEn }} />
-      <WhyChooseSection />
+      <WhyChooseSection data={{ id: whyChooseId, en: whyChooseEn }} />
       <HowWeWorkSection />
       <TestimonialsSection clientLogos={clientsId?.clients ?? []} />
       <CtaBannerSection data={{ id: whyUsId, en: whyUsEn }} />

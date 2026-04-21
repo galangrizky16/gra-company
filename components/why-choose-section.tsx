@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Target, Heart, TrendingUp, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
+import type { WhyChooseData } from "@/lib/fetchers";
 
 // ─── Feature config ─────────────────────────────────────────────────────────
 
@@ -64,12 +65,21 @@ const scaleIn = {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function WhyChooseSection() {
-  const { t } = useI18n();
+type Props = {
+  data: { id: WhyChooseData | null; en: WhyChooseData | null };
+};
+
+export default function WhyChooseSection({ data: allData }: Props) {
+  const { locale, t } = useI18n();
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
-  const { badge, heading, subtitle, features } = t.whyChoose;
+  const db = allData[locale] ?? allData.id;
+  const fallback = t.whyChoose;
+  const badge = db?.badge ?? fallback.badge;
+  const heading = db?.heading ?? fallback.heading;
+  const subtitle = db?.subtitle ?? fallback.subtitle;
+  const features = db?.features?.length ? db.features : fallback.features;
 
   return (
     <section

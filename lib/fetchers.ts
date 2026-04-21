@@ -34,6 +34,15 @@ export type WhyUsData = {
   videoUrl: string | null;
 };
 
+export type WhyChooseFeature = { icon: string; title: string; description: string };
+
+export type WhyChooseData = {
+  badge: string;
+  heading: string;
+  subtitle: string;
+  features: WhyChooseFeature[];
+};
+
 export type AboutHeroData = {
   badge: string;
   headline: string;
@@ -209,6 +218,64 @@ export async function fetchWhyUs(locale: string): Promise<WhyUsData | null> {
       ctaText: section.ctaText,
       stats,
       videoUrl: section.videoUrl,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchWhyChoose(locale: string): Promise<WhyChooseData | null> {
+  try {
+    let section = await prisma.whyChooseContent.findUnique({
+      where: { locale },
+    });
+
+    if (!section) {
+      const other = locale === "en" ? "id" : "en";
+      const src = await prisma.whyChooseContent.findUnique({
+        where: { locale: other },
+      });
+      if (!src) return null;
+
+      try {
+        const srcFeatures = (src.features ?? []) as WhyChooseFeature[];
+        const fields: Record<string, string> = {
+          badge: src.badge,
+          heading: src.heading,
+          subtitle: src.subtitle,
+        };
+        srcFeatures.forEach((f, i) => {
+          fields[`ft_${i}`] = f.title;
+          fields[`fd_${i}`] = f.description;
+        });
+
+        const translated = await translateFields(fields, other, locale);
+
+        const translatedFeatures = srcFeatures.map((f, i) => ({
+          icon: f.icon,
+          title: translated[`ft_${i}`] ?? f.title,
+          description: translated[`fd_${i}`] ?? f.description,
+        }));
+
+        section = await prisma.whyChooseContent.create({
+          data: {
+            locale,
+            badge: translated.badge,
+            heading: translated.heading,
+            subtitle: translated.subtitle,
+            features: translatedFeatures,
+          },
+        });
+      } catch {
+        section = src;
+      }
+    }
+
+    return {
+      badge: section.badge,
+      heading: section.heading,
+      subtitle: section.subtitle,
+      features: (section.features ?? []) as WhyChooseFeature[],
     };
   } catch {
     return null;
