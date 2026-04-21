@@ -82,6 +82,22 @@ model WhyUsSectionContent {
   @@map("why_us_section_content")
 }
 
+// ─── CMS: Why Choose section ────────────────────────────────────────────────
+
+model WhyChooseContent {
+  id        String   @id @default(uuid())
+  locale    String   @default("id")
+  badge     String
+  heading   String
+  subtitle  String   @default("")
+  features  Json     // [{ icon: string, title: string, description: string }, ...]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([locale])
+  @@map("why_choose_content")
+}
+
 // ─── CMS: About Hero section ─────────────────────────────────────────────────
 
 model AboutHeroContent {
